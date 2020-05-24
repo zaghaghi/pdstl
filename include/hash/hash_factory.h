@@ -4,13 +4,13 @@
 #include <memory>
 #include <vector>
 
-#include "include/hash/hash.h"
+#include "hash.h"
 
 template <typename T, typename S>
 class HashFactory {
    public:
-    virtual std::unique_ptr<Hash<T, S>> createHash(int seed) = 0;
-    virtual std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(int num) = 0;
+    virtual std::unique_ptr<Hash<T, S>> createHash(S seed) = 0;
+    virtual std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(uint32_t num) = 0;
     virtual ~HashFactory() {}
 };
 
