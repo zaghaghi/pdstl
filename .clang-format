@@ -1,0 +1,12 @@
+{
+    BasedOnStyle: Google, 
+    UseTab: Never, 
+    IndentWidth: 4, 
+    BreakBeforeBraces: Attach, 
+    AllowShortIfStatementsOnASingleLine: false, 
+    IndentCaseLabels: false, 
+    ColumnLimit: 0, 
+    SpacesBeforeTrailingComments: 3, 
+    Cpp11BracedListStyle: true, 
+    PointerAlignment: Left,
+}
