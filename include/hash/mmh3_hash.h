@@ -1,8 +1,9 @@
 #ifndef INCLUDE_HASH_MMH3_HASH_H_
 #define INCLUDE_HASH_MMH3_HASH_H_
+#include <MurmurHash3.h>
+
 #include <string>
 
-#include "deps/MurmurHash3.h"
 #include "hash.h"
 
 template <typename T, typename S = uint32_t>

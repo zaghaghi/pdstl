@@ -1,7 +1,7 @@
 #ifndef INCLUDE_MEMBERSHIP_BLOOM_FILTER_H_
 #define INCLUDE_MEMBERSHIP_BLOOM_FILTER_H_
-#include <include/exception/not_supported.h>
-#include <include/hash/mmh3_hash_factory.h>
+#include <exception/not_supported.h>
+#include <hash/mmh3_hash_factory.h>
 
 #include <bitset>
 #include <iostream>
