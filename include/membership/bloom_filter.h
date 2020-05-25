@@ -4,7 +4,6 @@
 #include <hash/mmh3_hash_factory.h>
 
 #include <bitset>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,7 +27,7 @@ template <
     // Hash output size
     typename S = uint32_t>
 class BloomFilter : public Membership<T> {
-   private:
+   protected:
     std::unique_ptr<HF<T, S>> hash_factory_;
     std::size_t hash_count_;
     std::bitset<MC> bitset_memory_;
@@ -76,12 +75,10 @@ BloomFilter<HC, MC, HF, T, S>::BloomFilter() : hash_count_(HC) {
 
 template <std::size_t HC, std::size_t MC, template <typename...> class HF, typename T, typename S>
 void BloomFilter<HC, MC, HF, T, S>::insert(const T& item) {
-    std::cout << "insert(" << item << ")" << std::endl;
     std::for_each(hashes_.cbegin(), hashes_.cend(), [this, &item](auto& hash) {
         auto bit = hash->Value(item) % MC;
         this->bitset_memory_.set(bit);
     });
-    std::cout << bitset_memory_ << std::endl;
 }
 
 template <std::size_t HC, std::size_t MC, template <typename...> class HF, typename T, typename S>
@@ -101,7 +98,6 @@ bool BloomFilter<HC, MC, HF, T, S>::contains(const T& item) const {
         auto bit = hash->Value(item) % MC;
         item_bitset.set(bit);
     });
-    std::cout << bitset_memory_ << std::endl;
     return (bitset_memory_ & item_bitset) == item_bitset;
 }
 

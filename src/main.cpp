@@ -1,6 +1,7 @@
 #include <hash/mmh3_hash_factory.h>
 #include <membership/bloom_filter.h>
 #include <membership/bloom_filter_calculator.h>
+#include <membership/counting_bloom_filter.h>
 
 #include <iostream>
 #include <string>
@@ -73,4 +74,26 @@ int main(int /* argc */, char** /*argv*/) {
               << number_of_memory_bits << " memory bits for inserting "
               << expected_number_of_elements << " elements is: "
               << fp_prob_computed << std::endl;
+
+    CountingBloomFilter<4, 64> counting_bloom_filter;
+    std::for_each(urls.begin(), urls.end(), [&counting_bloom_filter](auto& item) {
+        counting_bloom_filter.insert(item);
+    });
+
+    if (counting_bloom_filter.contains("https://gmail.com")) {
+        std::cout << "FOUND!!!!!" << std::endl;
+    } else {
+        std::cout << "NOT FOUND" << std::endl;
+    }
+    if (counting_bloom_filter.contains(urls[0])) {
+        std::cout << "FOUND" << std::endl;
+    } else {
+        std::cout << "NOT FOUND!!!!!" << std::endl;
+    }
+    counting_bloom_filter.erase(urls[0]);
+    if (counting_bloom_filter.contains(urls[0])) {
+        std::cout << "FOUND!!!!!" << std::endl;
+    } else {
+        std::cout << "NOT FOUND" << std::endl;
+    }
 }

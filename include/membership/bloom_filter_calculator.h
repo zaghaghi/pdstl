@@ -1,3 +1,6 @@
+#ifndef INCLUDE_MEMBERSHIP_BLOOM_FILTER_CALCULATOR_H_
+#define INCLUDE_MEMBERSHIP_BLOOM_FILTER_CALCULATOR_H_
+
 #include <cmath>
 
 /*
@@ -30,3 +33,5 @@ class BloomFilterCalculator {
             number_of_hash_functions);
     }
 };
+
+#endif   // INCLUDE_MEMBERSHIP_BLOOM_FILTER_CALCULATOR_H_
