@@ -1,5 +1,6 @@
 #include <hash/mmh3_hash_factory.h>
-#include <membership/bloom_filer.h>
+#include <membership/bloom_filter.h>
+#include <membership/bloom_filter_calculator.h>
 
 #include <iostream>
 #include <string>
@@ -53,5 +54,23 @@ int main(int /* argc */, char** /*argv*/) {
     } else {
         std::cout << "NOT FOUND!!!!!" << std::endl;
     }
-    // bloom_filter.erase(c);
+    float fp_probability = 0.01f;
+    size_t expected_number_of_elements = 1000000;
+    size_t number_of_hash_functions, number_of_memory_bits;
+    BloomFilterCalculator::OptimalParams(expected_number_of_elements, fp_probability, number_of_hash_functions, number_of_memory_bits);
+    std::cout << "Optimal params for " << expected_number_of_elements
+              << " elements with false-positive probability of " << fp_probability
+              << std::endl;
+    std::cout << "\tnumber of hash functions: " << number_of_hash_functions << std::endl;
+    std::cout << "\tnumber of memory bits: " << number_of_memory_bits << std::endl;
+
+    float fp_prob_computed = BloomFilterCalculator::FalsePositiveProbability(
+        expected_number_of_elements,
+        number_of_hash_functions,
+        number_of_memory_bits);
+    std::cout << "False-positive porbability of bloom filter with "
+              << number_of_hash_functions << " hash functions and "
+              << number_of_memory_bits << " memory bits for inserting "
+              << expected_number_of_elements << " elements is: "
+              << fp_prob_computed << std::endl;
 }
