@@ -3,17 +3,17 @@
 
 template <typename T, typename S>
 class Hash {
-   private:
-    uint16_t seed_;
+   protected:
+    S seed_;
 
    public:
-    explicit Hash(uint16_t seed);
+    explicit Hash(S seed);
     virtual ~Hash();
-    virtual S Value() = 0;
+    virtual S Value(const T& input) const = 0;
 };
 
 template <typename T, typename S>
-Hash<T, S>::Hash(uint16_t seed) : seed_(seed) {
+Hash<T, S>::Hash(S seed) : seed_(seed) {
 }
 
 template <typename T, typename S>
