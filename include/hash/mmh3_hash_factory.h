@@ -7,35 +7,33 @@
 #include "hash_factory.h"
 #include "mmh3_hash.h"
 
-typedef uint32_t S;
-
-template <typename T>
+template <typename T, typename S = uint32_t>
 class MMH3HashFactory : public HashFactory<T, S> {
-    std::set<S> generateDistinctRandomSeeds(uint32_t num);
+    std::set<S> generateDistinctRandomSeeds(std::size_t num);
 
    public:
     std::unique_ptr<Hash<T, S>> createHash(S seed) override;
-    std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(uint32_t num) override;
+    std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(std::size_t num) override;
     virtual ~MMH3HashFactory() {}
 };
 
-template <typename T>
-std::unique_ptr<Hash<T, S>> MMH3HashFactory<T>::createHash(S seed) {
-    return std::make_unique<MMH3Hash<T>>(seed);
+template <typename T, typename S>
+std::unique_ptr<Hash<T, S>> MMH3HashFactory<T, S>::createHash(S seed) {
+    return std::make_unique<MMH3Hash<T, S>>(seed);
 }
 
-template <typename T>
-std::vector<std::unique_ptr<Hash<T, S>>> MMH3HashFactory<T>::createHashVector(uint32_t num) {
+template <typename T, typename S>
+std::vector<std::unique_ptr<Hash<T, S>>> MMH3HashFactory<T, S>::createHashVector(std::size_t num) {
     std::vector<std::unique_ptr<Hash<T, S>>> result;
     std::set<S> seeds_set = generateDistinctRandomSeeds(num);
     std::for_each(seeds_set.cbegin(), seeds_set.cend(), [&result](int seed) {
-        result.emplace_back(std::make_unique<MMH3Hash<T>>(seed));
+        result.emplace_back(std::make_unique<MMH3Hash<T, S>>(seed));
     });
     return result;
 }
 
-template <typename T>
-std::set<S> MMH3HashFactory<T>::generateDistinctRandomSeeds(uint32_t num) {
+template <typename T, typename S>
+std::set<S> MMH3HashFactory<T, S>::generateDistinctRandomSeeds(std::size_t num) {
     std::set<S> result;
     std::random_device rd;
     std::mt19937 gen(rd());

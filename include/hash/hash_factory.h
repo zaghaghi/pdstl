@@ -10,7 +10,7 @@ template <typename T, typename S>
 class HashFactory {
    public:
     virtual std::unique_ptr<Hash<T, S>> createHash(S seed) = 0;
-    virtual std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(uint32_t num) = 0;
+    virtual std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(std::size_t num) = 0;
     virtual ~HashFactory() {}
 };
 
