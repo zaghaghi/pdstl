@@ -22,4 +22,5 @@
       </default>
     </templatetypeparameter>
   </classtemplate>
+  <class name="BloomFilterCalculator" ref="BloomFilterCalculator#BloomFilterCalculator" />
 </index>
