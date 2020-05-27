@@ -16,13 +16,13 @@ template <
     std::size_t HC,
     // Number of memory bits
     std::size_t MC,
-    // Type of counter
+    // Type of counter (default: uint16_t)
     typename C = uint16_t,
-    // Hash factory method class
+    // Hash factory method class (default: MMH3HashFactory)
     template <typename...> class HF = MMH3HashFactory,
-    // Element type which will be inserted into counting bloom filter
+    // Element type which will be inserted into counting bloom filter (default: std::string)
     typename T = std::string,
-    // Hash output size
+    // Hash output size (default: uint32_t)
     typename S = uint32_t>
 class CountingBloomFilter : public BloomFilter<HC, MC, HF, T, S> {
    protected:
@@ -55,12 +55,18 @@ class CountingBloomFilter : public BloomFilter<HC, MC, HF, T, S> {
     void clear() override;
 };
 
-template <std::size_t HC, std::size_t MC, typename C, template <typename...> class HF, typename T, typename S>
-CountingBloomFilter<HC, MC, C, HF, T, S>::CountingBloomFilter() : BloomFilter<HC, MC, HF, T, S>(), counters_(MC, 0) {
+#define CLASS_METHOD_IMPL(method_name, ...)                \
+    template <std::size_t HC, std::size_t MC,              \
+              typename C, template <typename...> class HF, \
+              typename T, typename S>                      \
+    __VA_ARGS__ CountingBloomFilter<HC, MC, C, HF, T, S>::method_name
+
+CLASS_METHOD_IMPL(CountingBloomFilter, )
+() : BloomFilter<HC, MC, HF, T, S>(), counters_(MC, 0) {
 }
 
-template <std::size_t HC, std::size_t MC, typename C, template <typename...> class HF, typename T, typename S>
-void CountingBloomFilter<HC, MC, C, HF, T, S>::insert(const T& item) {
+CLASS_METHOD_IMPL(insert, void)
+(const T& item) {
     std::for_each(hashes_.cbegin(), hashes_.cend(), [this, &item](auto& hash) {
         auto bit = hash->Value(item) % MC;
         this->counters_[bit] += 1;
@@ -70,8 +76,8 @@ void CountingBloomFilter<HC, MC, C, HF, T, S>::insert(const T& item) {
     });
 }
 
-template <std::size_t HC, std::size_t MC, typename C, template <typename...> class HF, typename T, typename S>
-void CountingBloomFilter<HC, MC, C, HF, T, S>::erase(const T& item) {
+CLASS_METHOD_IMPL(erase, void)
+(const T& item) {
     std::for_each(hashes_.cbegin(), hashes_.cend(), [this, &item](auto& hash) {
         auto bit = hash->Value(item) % MC;
         this->counters_[bit] -= 1;
@@ -81,8 +87,8 @@ void CountingBloomFilter<HC, MC, C, HF, T, S>::erase(const T& item) {
     });
 }
 
-template <std::size_t HC, std::size_t MC, typename C, template <typename...> class HF, typename T, typename S>
-void CountingBloomFilter<HC, MC, C, HF, T, S>::clear() {
+CLASS_METHOD_IMPL(clear, void)
+() {
     BloomFilter<HC, MC, HF, T, S>::clear();
     counters_.clear();
     counters_.resize(MC, 0);
