@@ -2,3 +2,5 @@ build/
 .vscode/
 docs/html
 docs/latex
+docs/sphinx/_*
+.DS_Store
