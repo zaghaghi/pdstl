@@ -7,24 +7,39 @@
 #include "hash_factory.h"
 #include "mmh3_hash.h"
 
-template <typename T, typename S = uint32_t>
+template <
+    // Input type of hash function
+    typename T,
+    // Output type of hash function (default: uint32_t)
+    typename S = uint32_t>
 class MMH3HashFactory : public HashFactory<T, S> {
     std::set<S> generateDistinctRandomSeeds(std::size_t num);
 
    public:
-    std::unique_ptr<Hash<T, S>> createHash(S seed) override;
-    std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(std::size_t num) override;
+    typedef std::unique_ptr<Hash<T, S>> HashPtr;
+    typedef std::vector<HashPtr> HashPtrVector;
+    HashPtr createHash(S seed) override;
+    HashPtrVector createHashVector(std::size_t num) override;
     virtual ~MMH3HashFactory() {}
 };
 
-template <typename T, typename S>
-std::unique_ptr<Hash<T, S>> MMH3HashFactory<T, S>::createHash(S seed) {
+#define CLASS_METHOD_IMPL(method_name, ...) \
+    template <typename T, typename S>       \
+    __VA_ARGS__ MMH3HashFactory<T, S>::method_name
+
+#define CLASS_METHOD_IMPL_TYPED(method_name, ...) \
+    template <typename T, typename S>             \
+    typename MMH3HashFactory<T, S>::__VA_ARGS__   \
+        MMH3HashFactory<T, S>::method_name
+
+CLASS_METHOD_IMPL_TYPED(createHash, HashPtr)
+(S seed) {
     return std::make_unique<MMH3Hash<T, S>>(seed);
 }
 
-template <typename T, typename S>
-std::vector<std::unique_ptr<Hash<T, S>>> MMH3HashFactory<T, S>::createHashVector(std::size_t num) {
-    std::vector<std::unique_ptr<Hash<T, S>>> result;
+CLASS_METHOD_IMPL_TYPED(createHashVector, HashPtrVector)
+(std::size_t num) {
+    HashPtrVector result;
     std::set<S> seeds_set = generateDistinctRandomSeeds(num);
     std::for_each(seeds_set.cbegin(), seeds_set.cend(), [&result](int seed) {
         result.emplace_back(std::make_unique<MMH3Hash<T, S>>(seed));
@@ -32,8 +47,8 @@ std::vector<std::unique_ptr<Hash<T, S>>> MMH3HashFactory<T, S>::createHashVector
     return result;
 }
 
-template <typename T, typename S>
-std::set<S> MMH3HashFactory<T, S>::generateDistinctRandomSeeds(std::size_t num) {
+CLASS_METHOD_IMPL(generateDistinctRandomSeeds, std::set<S>)
+(std::size_t num) {
     std::set<S> result;
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -43,5 +58,8 @@ std::set<S> MMH3HashFactory<T, S>::generateDistinctRandomSeeds(std::size_t num) 
     }
     return result;
 }
+
+#undef CLASS_METHOD_IMPL
+#undef CLASS_METHOD_IMPL_TYPED
 
 #endif   // INCLUDE_HASH_MMH3_HASH_FACTORY_H_

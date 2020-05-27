@@ -1,7 +1,11 @@
 #ifndef INCLUDE_HASH_HASH_H_
 #define INCLUDE_HASH_HASH_H_
 
-template <typename T, typename S>
+template <
+    // Input type to hash function
+    typename T,
+    // Output type from hash function
+    typename S>
 class Hash {
    protected:
     S seed_;
@@ -12,12 +16,18 @@ class Hash {
     virtual S Value(const T& input) const = 0;
 };
 
-template <typename T, typename S>
-Hash<T, S>::Hash(S seed) : seed_(seed) {
+#define CLASS_METHOD_IMPL(method_name, ...) \
+    template <typename T, typename S>       \
+    __VA_ARGS__ Hash<T, S>::method_name
+
+CLASS_METHOD_IMPL(Hash, )
+(S seed) : seed_(seed) {
 }
 
-template <typename T, typename S>
-Hash<T, S>::~Hash() {
+CLASS_METHOD_IMPL(~Hash, )
+() {
 }
+
+#undef CLASS_METHOD_IMPL
 
 #endif   // INCLUDE_HASH_HASH_H_

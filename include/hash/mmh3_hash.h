@@ -6,7 +6,11 @@
 
 #include "hash.h"
 
-template <typename T, typename S = uint32_t>
+template <
+    // Input type to hash function
+    typename T,
+    // Output type from hash function (default: uint32_t)
+    typename S = uint32_t>
 class MMH3Hash : public Hash<T, S> {
    public:
     explicit MMH3Hash(S seed);
@@ -14,13 +18,19 @@ class MMH3Hash : public Hash<T, S> {
     S Value(const T& input) const override;
 };
 
-template <typename T, typename S>
-MMH3Hash<T, S>::MMH3Hash(S seed) : Hash<T, S>(seed) {
+#define CLASS_METHOD_IMPL(method_name, ...) \
+    template <typename T, typename S>       \
+    __VA_ARGS__ MMH3Hash<T, S>::method_name
+
+CLASS_METHOD_IMPL(MMH3Hash, )
+(S seed) : Hash<T, S>(seed) {
 }
 
-template <typename T, typename S>
-MMH3Hash<T, S>::~MMH3Hash() {
+CLASS_METHOD_IMPL(~MMH3Hash, )
+() {
 }
+
+#undef CLASS_METHOD_IMPL
 
 template <>
 uint32_t MMH3Hash<std::string, uint32_t>::Value(const std::string& input) const {

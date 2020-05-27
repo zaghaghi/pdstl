@@ -6,7 +6,11 @@
 
 #include "hash.h"
 
-template <typename T, typename S>
+template <
+    // Input type of hash function
+    typename T,
+    // Output type of hash function (default: uint32_t)
+    typename S>
 class HashFactory {
    public:
     virtual std::unique_ptr<Hash<T, S>> createHash(S seed) = 0;
