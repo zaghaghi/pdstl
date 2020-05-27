@@ -20,8 +20,8 @@ class MMH3HashFactory : public HashFactory<T, S> {
     std::set<S> generateDistinctRandomSeeds(std::size_t num);
 
    public:
-    typedef std::unique_ptr<Hash<T, S>> HashPtr;
-    typedef std::vector<HashPtr> HashPtrVector;
+    using typename HashFactory<T, S>::HashPtr;
+    using typename HashFactory<T, S>::HashPtrVector;
     /*! \brief creates a MurmurHash3 initialized with \a seed
      * \param seed - initialized seed for hash
      * 
@@ -33,7 +33,7 @@ class MMH3HashFactory : public HashFactory<T, S> {
      *
      * \return unique_ptr of a MurmurHash3 object initialized with a random seed
      */
-    virtual std::unique_ptr<Hash<T, S>> createHash() override;
+    HashPtr createHash() override;
 
     /* \brief creates a vector of MurmurHash3 instances initialized with random seed
      * @num number of hash objects

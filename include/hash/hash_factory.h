@@ -16,25 +16,28 @@ template <
     typename S>
 class HashFactory {
    public:
+    typedef std::unique_ptr<Hash<T, S>> HashPtr;
+    typedef std::vector<HashPtr> HashPtrVector;
+
     /*! \brief creates a hash object initialized with the given seed
      *  \param seed - initialized seed for hash
      * 
      *  \return unique_ptr of a hash object initialized with \a seed
      */
-    virtual std::unique_ptr<Hash<T, S>> createHash(S seed) = 0;
+    virtual HashPtr createHash(S seed) = 0;
 
     /*! \brief creates hash object initialized with random seed
      *
      * \return unique_ptr of a hash object initialized with a random seed
      */
-    virtual std::unique_ptr<Hash<T, S>> createHash() = 0;
+    virtual HashPtr createHash() = 0;
 
     /*! \brief creates a vector of hashes, all initialized with random seed
      * \param num - number of hash objects
      * 
      * \return a vector of unique_ptr of hash objects, all hashes initialized with distinct random seeds
      */
-    virtual std::vector<std::unique_ptr<Hash<T, S>>> createHashVector(std::size_t num) = 0;
+    virtual HashPtrVector createHashVector(std::size_t num) = 0;
 
     //! default destructor
     virtual ~HashFactory() {}
