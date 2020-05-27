@@ -7,18 +7,39 @@
 #include "hash_factory.h"
 #include "mmh3_hash.h"
 
+/*! \brief hash factory for MurmurHash3
+ *
+ * \tparam T - Input type of hash function
+ * \tparam S - Output type of hash function (default: uint32_t)
+ */
 template <
-    // Input type of hash function
     typename T,
-    // Output type of hash function (default: uint32_t)
     typename S = uint32_t>
 class MMH3HashFactory : public HashFactory<T, S> {
+   private:
     std::set<S> generateDistinctRandomSeeds(std::size_t num);
 
    public:
     typedef std::unique_ptr<Hash<T, S>> HashPtr;
     typedef std::vector<HashPtr> HashPtrVector;
+    /*! \brief creates a MurmurHash3 initialized with \a seed
+     * \param seed - initialized seed for hash
+     * 
+     * \return unique_ptr of a MurmurHash3 object initialized with \a seed
+     */
     HashPtr createHash(S seed) override;
+
+    /*! \brief creates a MurmurHash3 initialized with random seed
+     *
+     * \return unique_ptr of a MurmurHash3 object initialized with a random seed
+     */
+    virtual std::unique_ptr<Hash<T, S>> createHash() override;
+
+    /* \brief creates a vector of MurmurHash3 instances initialized with random seed
+     * @num number of hash objects
+     * 
+     * @return a vector of unique_ptr of Murmurhash3 objects, all hashes initialized with distinct random seeds
+     */
     HashPtrVector createHashVector(std::size_t num) override;
     virtual ~MMH3HashFactory() {}
 };
@@ -35,6 +56,12 @@ class MMH3HashFactory : public HashFactory<T, S> {
 CLASS_METHOD_IMPL_TYPED(createHash, HashPtr)
 (S seed) {
     return std::make_unique<MMH3Hash<T, S>>(seed);
+}
+
+CLASS_METHOD_IMPL_TYPED(createHash, HashPtr)
+() {
+    std::set<S> seeds_set = generateDistinctRandomSeeds(1);
+    return std::make_unique<MMH3Hash<T, S>>(*seeds_set.begin());
 }
 
 CLASS_METHOD_IMPL_TYPED(createHashVector, HashPtrVector)

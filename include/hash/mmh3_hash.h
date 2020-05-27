@@ -6,15 +6,30 @@
 
 #include "hash.h"
 
+/*! \brief MurmurHash3 class
+ *
+ * \tparam T - Input type to hash function
+ * \tparam S -Output type from hash function (default: uint32_t)
+ */
 template <
-    // Input type to hash function
     typename T,
-    // Output type from hash function (default: uint32_t)
     typename S = uint32_t>
 class MMH3Hash : public Hash<T, S> {
    public:
+    /*! \brief constructor for creating a MurmurHash3 initialized with \a seed
+     *
+     * \param seed - seed used in MurmurHash3 instanse creation
+     */
     explicit MMH3Hash(S seed);
+
+    //! default destructor
     ~MMH3Hash();
+
+    /*! \brief get hash value of \a input
+     *
+     * \param input - input of type \a T
+     * \return hash value of type \a S
+     */
     S Value(const T& input) const override;
 };
 

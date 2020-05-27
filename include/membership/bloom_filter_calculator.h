@@ -3,19 +3,18 @@
 
 #include <cmath>
 
-/*
- * Bloom Filter Calculator
+/*! \brief Bloom Filter Calculator
  *
  *  BloomFilterCalculator calculates near-optimal number of hash functions, length of memory bits and false positive probability.
  */
 class BloomFilterCalculator {
    public:
-    /* OptimalParams
-    * @expected_number_of_elements Expected number of elements will be inserted into bloom filter.
-    * @false_positive_probability Desiered false-positive probability
-    * @number_of_hash_functions [Output] near-optimal number of hash functions.
-    * @number_of_memory_bits [Output] near-optimal number of memory bits.
-    */
+    /*! \brief compute near optimal parameters for bloom filter
+     * \param expected_number_of_elements -  [in] Expected number of elements will be inserted into bloom filter.
+     * \param false_positive_probability - [in] Desiered false-positive probability
+     * \param number_of_hash_functions - [out] near-optimal number of hash functions.
+     * \param number_of_memory_bits - [out] near-optimal number of memory bits.
+     */
     static void OptimalParams(
         size_t expected_number_of_elements, float false_positive_probability,
         size_t& number_of_hash_functions, size_t& number_of_memory_bits) {
@@ -23,6 +22,14 @@ class BloomFilterCalculator {
         number_of_memory_bits = -(expected_number_of_elements * std::log(false_positive_probability) / (log(2) * log(2)));
     }
 
+    /*! \brief compute false-positive porbability of bloom filter
+     *
+     * \param expected_number_of_elements -  [in] Expected number of elements will be inserted into bloom filter.
+     * \param number_of_hash_functions -  [in] number of hash functions.
+     * \param number_of_memory_bits - [in] number of memory bits.
+     * 
+     * \return false-positive porbability of bloom filter
+     */
     static float FalsePositiveProbability(
         size_t expected_number_of_elements,
         size_t number_of_hash_functions,

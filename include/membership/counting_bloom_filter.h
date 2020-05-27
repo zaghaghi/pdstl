@@ -6,23 +6,23 @@
 
 #include "bloom_filter.h"
 
-/*
- * Counting Bloom Filter
+/*! \brief Counting Bloom Filter
  *
- * CountingBloomFilter class implements counting bloom filter algorithm for solving membership problem.
+ * CountingBloomFilter class implements counting filter algorithm for solving membership problem.
+ * 
+ * \tparam HC - Number of hash functions
+ * \tparam MC - Number of memory bits
+ * \tparam C - Type of counter (default: uint16_t)
+ * \tparam HF - Hash factory method class (default: MMH3HashFactory)
+ * \tparam T - Element type which will be inserted into counting bloom filter (default: std::string)
+ * \tparam S - Hash output size (default: uint32_t)
  */
 template <
-    // Number of hash functions
     std::size_t HC,
-    // Number of memory bits
     std::size_t MC,
-    // Type of counter (default: uint16_t)
     typename C = uint16_t,
-    // Hash factory method class (default: MMH3HashFactory)
     template <typename...> class HF = MMH3HashFactory,
-    // Element type which will be inserted into counting bloom filter (default: std::string)
     typename T = std::string,
-    // Hash output size (default: uint32_t)
     typename S = uint32_t>
 class CountingBloomFilter : public BloomFilter<HC, MC, HF, T, S> {
    protected:
@@ -31,26 +31,25 @@ class CountingBloomFilter : public BloomFilter<HC, MC, HF, T, S> {
     using BloomFilter<HC, MC, HF, T, S>::bitset_memory_;
 
    public:
-    // Default constructor
+    //! Default constructor
     CountingBloomFilter();
 
-    /* insert
-     * @item the item to insert into the bloom filter.
+    /*! \brief Insert item into counting bloom filter.
+     * \param item - the item to insert into the bloom filter.
      * 
-     * Insert item into counting bloom filter.
      */
     void insert(const T& item) override;
 
-    /* erase
-     * @item the item to erase from filter.
+    /*! \brief Erase item from counting bloom filter.
      * 
-     * Erase item from counting bloom filter.
+     * \param item - the item to erase from filter.
+     * 
+     * 
      */
     void erase(const T& item) override;
 
-    /* clear
+    /*! \brief Clear filter and resets its internal memory.
      * 
-     * Clear filter and resets its internal memory.
      */
     void clear() override;
 };
@@ -93,5 +92,7 @@ CLASS_METHOD_IMPL(clear, void)
     counters_.clear();
     counters_.resize(MC, 0);
 }
+
+#undef CLASS_METHOD_IMPL
 
 #endif   // INCLUDE_MEMBERSHIP_COUNTING_BLOOM_FILTER_H_
