@@ -19,9 +19,9 @@ std::ostream& operator<<(std::ostream& out, const MyCustomClass& c) {
 }
 
 template <>
-uint32_t mmh3_hash<MyCustomClass>::Value(const MyCustomClass& input) const {
-    mmh3_hash<std::string> string_hash(seed_);
-    uint32_t output = string_hash.Value(input.first_name) ^ string_hash.Value(input.last_name);
+uint32_t pdstl::mmh3_hash<MyCustomClass>::value(const MyCustomClass& input) const {
+    pdstl::mmh3_hash<std::string> string_hash(seed_);
+    uint32_t output = string_hash.value(input.first_name) ^ string_hash.value(input.last_name);
     return output;
 }
 
@@ -42,7 +42,7 @@ int main(int /* argc */, char** /*argv*/) {
         "https://facebook.com",
         "https://twitter.com"};
     pdstl::bloom_filter<4, 64> url_bloom_filter;
-    std::for_each(urls.begin(), urls.end(), [&url_bloom_filter](auto& item) {
+    std::for_each(urls.begin(), urls.end(), [&url_bloom_filter](const std::string& item) {
         url_bloom_filter.insert(item);
     });
 
@@ -59,14 +59,14 @@ int main(int /* argc */, char** /*argv*/) {
     float fp_probability = 0.01f;
     size_t expected_number_of_elements = 1000000;
     size_t number_of_hash_functions, number_of_memory_bits;
-    pdstl::bloom_filter_calculator::OptimalParams(expected_number_of_elements, fp_probability, number_of_hash_functions, number_of_memory_bits);
+    pdstl::bloom_filter_calculator::optimal_params(expected_number_of_elements, fp_probability, number_of_hash_functions, number_of_memory_bits);
     std::cout << "Optimal params for " << expected_number_of_elements
               << " elements with false-positive probability of " << fp_probability
               << std::endl;
     std::cout << "\tnumber of hash functions: " << number_of_hash_functions << std::endl;
     std::cout << "\tnumber of memory bits: " << number_of_memory_bits << std::endl;
 
-    float fp_prob_computed = pdstl::bloom_filter_calculator::FalsePositiveProbability(
+    float fp_prob_computed = pdstl::bloom_filter_calculator::false_positive_probability(
         expected_number_of_elements,
         number_of_hash_functions,
         number_of_memory_bits);
@@ -77,7 +77,7 @@ int main(int /* argc */, char** /*argv*/) {
               << fp_prob_computed << std::endl;
 
     pdstl::counting_bloom_filter<4, 64> a_counting_bloom_filter;
-    std::for_each(urls.begin(), urls.end(), [&a_counting_bloom_filter](auto& item) {
+    std::for_each(urls.begin(), urls.end(), [&a_counting_bloom_filter](const std::string& item) {
         a_counting_bloom_filter.insert(item);
     });
 
