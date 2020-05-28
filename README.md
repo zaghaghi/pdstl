@@ -1,4 +1,6 @@
 # PDSTL
+[![Build Status](https://travis-ci.org/zaghaghi/pdstl.svg?branch=master)](https://travis-ci.org/zaghaghi/pdstl)
+
 Probabilistic Data Structure Template Library, is the template library for probabilistic data structures.
 Most part of data structures and algorithms come from this book:
 
