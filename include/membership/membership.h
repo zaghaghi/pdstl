@@ -1,14 +1,16 @@
 #ifndef INCLUDE_MEMBERSHIP_MEMBERSHIP_H_
 #define INCLUDE_MEMBERSHIP_MEMBERSHIP_H_
 
+namespace pdstl {
+
 /*! \brief Base class for solving membership problem
  * 
  */
 template <typename T>
-class Membership {
+class membership {
    public:
     //! Default destructor
-    virtual ~Membership() {}
+    virtual ~membership() {}
 
     /*! \brief insert an item into the filter
      * 
@@ -33,5 +35,7 @@ class Membership {
      */
     virtual bool contains(const T& item) const = 0;
 };
+
+}   // namespace pdstl
 
 #endif   // INCLUDE_MEMBERSHIP_MEMBERSHIP_H_

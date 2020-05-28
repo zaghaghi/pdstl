@@ -8,6 +8,8 @@
 #include "hash_factory.h"
 #include "mmh3_hash.h"
 
+namespace pdstl {
+
 /*! \brief hash factory for MurmurHash3
  *
  * \tparam T - Input type of hash function
@@ -16,66 +18,66 @@
 template <
     typename T,
     typename S = uint32_t>
-class MMH3HashFactory : public HashFactory<T, S> {
+class mmh3_hash_factory : public hash_factory<T, S> {
    private:
-    std::set<S> generateDistinctRandomSeeds(std::size_t num);
+    std::set<S> generate_distinct_random_seeds(std::size_t num);
 
    public:
-    using typename HashFactory<T, S>::HashPtr;
-    using typename HashFactory<T, S>::HashPtrVector;
+    using typename hash_factory<T, S>::hash_ptr_t;
+    using typename hash_factory<T, S>::hash_ptr_vector_t;
     /*! \brief creates a MurmurHash3 initialized with \a seed
      * \param seed - initialized seed for hash
      * 
      * \return unique_ptr of a MurmurHash3 object initialized with \a seed
      */
-    HashPtr createHash(S seed) override;
+    hash_ptr_t create_hash(S seed) override;
 
     /*! \brief creates a MurmurHash3 initialized with random seed
      *
      * \return unique_ptr of a MurmurHash3 object initialized with a random seed
      */
-    HashPtr createHash() override;
+    hash_ptr_t create_hash() override;
 
     /* \brief creates a vector of MurmurHash3 instances initialized with random seed
      * @num number of hash objects
      * 
      * @return a vector of unique_ptr of Murmurhash3 objects, all hashes initialized with distinct random seeds
      */
-    HashPtrVector createHashVector(std::size_t num) override;
-    virtual ~MMH3HashFactory() {}
+    hash_ptr_vector_t create_hash_vector(std::size_t num) override;
+    virtual ~mmh3_hash_factory() {}
 };
 
 #define CLASS_METHOD_IMPL(method_name, ...) \
     template <typename T, typename S>       \
-    __VA_ARGS__ MMH3HashFactory<T, S>::method_name
+    __VA_ARGS__ mmh3_hash_factory<T, S>::method_name
 
 #define CLASS_METHOD_IMPL_TYPED(method_name, ...) \
     template <typename T, typename S>             \
-    typename MMH3HashFactory<T, S>::__VA_ARGS__   \
-        MMH3HashFactory<T, S>::method_name
+    typename mmh3_hash_factory<T, S>::__VA_ARGS__ \
+        mmh3_hash_factory<T, S>::method_name
 
-CLASS_METHOD_IMPL_TYPED(createHash, HashPtr)
+CLASS_METHOD_IMPL_TYPED(create_hash, hash_ptr_t)
 (S seed) {
-    return std::make_unique<MMH3Hash<T, S>>(seed);
+    return std::make_unique<mmh3_hash<T, S>>(seed);
 }
 
-CLASS_METHOD_IMPL_TYPED(createHash, HashPtr)
+CLASS_METHOD_IMPL_TYPED(create_hash, hash_ptr_t)
 () {
-    std::set<S> seeds_set = generateDistinctRandomSeeds(1);
-    return std::make_unique<MMH3Hash<T, S>>(*seeds_set.begin());
+    std::set<S> seeds_set = generate_distinct_random_seeds(1);
+    return std::make_unique<mmh3_hash<T, S>>(*seeds_set.begin());
 }
 
-CLASS_METHOD_IMPL_TYPED(createHashVector, HashPtrVector)
+CLASS_METHOD_IMPL_TYPED(create_hash_vector, hash_ptr_vector_t)
 (std::size_t num) {
-    HashPtrVector result;
-    std::set<S> seeds_set = generateDistinctRandomSeeds(num);
+    hash_ptr_vector_t result;
+    std::set<S> seeds_set = generate_distinct_random_seeds(num);
     std::for_each(seeds_set.cbegin(), seeds_set.cend(), [&result](int seed) {
-        result.emplace_back(std::make_unique<MMH3Hash<T, S>>(seed));
+        result.emplace_back(std::make_unique<mmh3_hash<T, S>>(seed));
     });
     return result;
 }
 
-CLASS_METHOD_IMPL(generateDistinctRandomSeeds, std::set<S>)
+CLASS_METHOD_IMPL(generate_distinct_random_seeds, std::set<S>)
 (std::size_t num) {
     std::set<S> result;
     std::random_device rd;
@@ -89,5 +91,7 @@ CLASS_METHOD_IMPL(generateDistinctRandomSeeds, std::set<S>)
 
 #undef CLASS_METHOD_IMPL
 #undef CLASS_METHOD_IMPL_TYPED
+
+}   // namespace pdstl
 
 #endif   // INCLUDE_HASH_MMH3_HASH_FACTORY_H_

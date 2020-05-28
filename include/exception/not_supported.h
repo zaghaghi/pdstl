@@ -3,10 +3,14 @@
 
 #include <stdexcept>
 
+namespace pdstl {
+
 //! \brief Exception used when the method or function is not supported
-class NotSupportedException : public std::logic_error {
+class not_supported_exception : public std::logic_error {
    public:
-    NotSupportedException() : std::logic_error("Method not supported.") {}
+    not_supported_exception() : std::logic_error("Method not supported.") {}
 };
+
+}   // namespace pdstl
 
 #endif   // INCLUDE_EXCEPTION_NOT_SUPPORTED_H

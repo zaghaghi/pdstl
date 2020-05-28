@@ -2,10 +2,11 @@
 #include <membership/bloom_filter.h>
 #include <membership/bloom_filter_calculator.h>
 #include <membership/counting_bloom_filter.h>
+#include <membership/quotient_filter.h>
 
+#include <algorithm>
 #include <iostream>
 #include <string>
-
 class MyCustomClass {
    public:
     std::string first_name;
@@ -18,17 +19,17 @@ std::ostream& operator<<(std::ostream& out, const MyCustomClass& c) {
 }
 
 template <>
-uint32_t MMH3Hash<MyCustomClass>::Value(const MyCustomClass& input) const {
-    MMH3Hash<std::string> string_hash(seed_);
+uint32_t mmh3_hash<MyCustomClass>::Value(const MyCustomClass& input) const {
+    mmh3_hash<std::string> string_hash(seed_);
     uint32_t output = string_hash.Value(input.first_name) ^ string_hash.Value(input.last_name);
     return output;
 }
 
 int main(int /* argc */, char** /*argv*/) {
     MyCustomClass c;
-    BloomFilter<4, 64, MMH3HashFactory, MyCustomClass> bloom_filter;
-    bloom_filter.insert(c);
-    if (bloom_filter.contains(c)) {
+    pdstl::bloom_filter<4, 64, pdstl::mmh3_hash_factory, MyCustomClass> a_bloom_filter;
+    a_bloom_filter.insert(c);
+    if (a_bloom_filter.contains(c)) {
         std::cout << "Found!" << std::endl;
     } else {
         std::cout << "Not Found!" << std::endl;
@@ -40,7 +41,7 @@ int main(int /* argc */, char** /*argv*/) {
         "https://youtube.com",
         "https://facebook.com",
         "https://twitter.com"};
-    BloomFilter<4, 64> url_bloom_filter;
+    pdstl::bloom_filter<4, 64> url_bloom_filter;
     std::for_each(urls.begin(), urls.end(), [&url_bloom_filter](auto& item) {
         url_bloom_filter.insert(item);
     });
@@ -58,14 +59,14 @@ int main(int /* argc */, char** /*argv*/) {
     float fp_probability = 0.01f;
     size_t expected_number_of_elements = 1000000;
     size_t number_of_hash_functions, number_of_memory_bits;
-    BloomFilterCalculator::OptimalParams(expected_number_of_elements, fp_probability, number_of_hash_functions, number_of_memory_bits);
+    pdstl::bloom_filter_calculator::OptimalParams(expected_number_of_elements, fp_probability, number_of_hash_functions, number_of_memory_bits);
     std::cout << "Optimal params for " << expected_number_of_elements
               << " elements with false-positive probability of " << fp_probability
               << std::endl;
     std::cout << "\tnumber of hash functions: " << number_of_hash_functions << std::endl;
     std::cout << "\tnumber of memory bits: " << number_of_memory_bits << std::endl;
 
-    float fp_prob_computed = BloomFilterCalculator::FalsePositiveProbability(
+    float fp_prob_computed = pdstl::bloom_filter_calculator::FalsePositiveProbability(
         expected_number_of_elements,
         number_of_hash_functions,
         number_of_memory_bits);
@@ -75,25 +76,27 @@ int main(int /* argc */, char** /*argv*/) {
               << expected_number_of_elements << " elements is: "
               << fp_prob_computed << std::endl;
 
-    CountingBloomFilter<4, 64> counting_bloom_filter;
-    std::for_each(urls.begin(), urls.end(), [&counting_bloom_filter](auto& item) {
-        counting_bloom_filter.insert(item);
+    pdstl::counting_bloom_filter<4, 64> a_counting_bloom_filter;
+    std::for_each(urls.begin(), urls.end(), [&a_counting_bloom_filter](auto& item) {
+        a_counting_bloom_filter.insert(item);
     });
 
-    if (counting_bloom_filter.contains("https://gmail.com")) {
+    if (a_counting_bloom_filter.contains("https://gmail.com")) {
         std::cout << "FOUND!!!!!" << std::endl;
     } else {
         std::cout << "NOT FOUND" << std::endl;
     }
-    if (counting_bloom_filter.contains(urls[0])) {
+    if (a_counting_bloom_filter.contains(urls[0])) {
         std::cout << "FOUND" << std::endl;
     } else {
         std::cout << "NOT FOUND!!!!!" << std::endl;
     }
-    counting_bloom_filter.erase(urls[0]);
-    if (counting_bloom_filter.contains(urls[0])) {
+    a_counting_bloom_filter.erase(urls[0]);
+    if (a_counting_bloom_filter.contains(urls[0])) {
         std::cout << "FOUND!!!!!" << std::endl;
     } else {
         std::cout << "NOT FOUND" << std::endl;
     }
+
+    pdstl::quotient_filter<16, 4> a_quotient_filter;
 }
