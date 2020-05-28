@@ -1,6 +1,7 @@
 #ifndef INCLUDE_MEMBERSHIP_COUNTING_BLOOM_FILTER_H_
 #define INCLUDE_MEMBERSHIP_COUNTING_BLOOM_FILTER_H_
 
+#include <algorithm>
 #include <string>
 #include <vector>
 

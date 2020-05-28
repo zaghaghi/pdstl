@@ -3,6 +3,7 @@
 #include <exception/not_supported.h>
 #include <hash/mmh3_hash_factory.h>
 
+#include <algorithm>
 #include <bitset>
 #include <memory>
 #include <string>

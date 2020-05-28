@@ -1,5 +1,6 @@
 #ifndef INCLUDE_HASH_MMH3_HASH_FACTORY_H_
 #define INCLUDE_HASH_MMH3_HASH_FACTORY_H_
+#include <algorithm>
 #include <memory>
 #include <random>
 #include <set>
