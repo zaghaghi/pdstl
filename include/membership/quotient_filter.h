@@ -3,6 +3,7 @@
 
 #include <exception/not_supported.h>
 #include <hash/mmh3_hash_factory.h>
+#include <table/quotient_table.h>
 
 #include <algorithm>
 #include <memory>
@@ -30,32 +31,10 @@ template <
     typename T = std::string,
     typename S = uint32_t>
 class quotient_filter : public membership<T> {
-   private:
-    typedef struct {
-        bool is_occupied : 1;
-        bool is_continuation : 1;
-        bool is_shifted : 1;
-        unsigned int fingerprint_remainder : F - Q;
-        bool is_empty() { return !is_occupied && !is_continuation && !is_shifted; }
-    } bucket;
-
-    typedef struct {
-        size_t start;
-        size_t end;
-    } run;
-
-    typedef struct {
-        size_t start;
-        size_t end;
-    } cluster;
-
-    void shift_right(size_t bucket_index);
-    run find_run(size_t bucket_index) const;
-
    protected:
     std::unique_ptr<HF<T, S>> hash_factory_;
     std::unique_ptr<hash<T, S>> hash_;
-    std::vector<bucket> buckets_;
+    quotient_table<S, F - Q> table_;
 
    public:
     //! Default constructor
@@ -96,20 +75,10 @@ class quotient_filter : public membership<T> {
         typename S>                         \
     __VA_ARGS__ quotient_filter<F, Q, HF, T, S>::method_name
 
-#define CLASS_METHOD_IMPL_TYPED(method_name, ...)         \
-    template <                                            \
-        std::size_t F,                                    \
-        std::size_t Q,                                    \
-        template <typename...> class HF,                  \
-        typename T,                                       \
-        typename S>                                       \
-    typename quotient_filter<F, Q, HF, T, S>::__VA_ARGS__ \
-        quotient_filter<F, Q, HF, T, S>::method_name
-
 CLASS_METHOD_IMPL(quotient_filter, )
-() : buckets_(std::vector<bucket>(1 << Q, {0, 0, 0, 0})) {
+() : table_(1 << Q) {
     static_assert(sizeof(S) * 8 >= F, "Fingerprint size is larger than hash size");
-    static_assert(F > Q, "Quotien size must be smaller than fingerprint size");
+    static_assert(F > Q, "Quotient size must be smaller than fingerprint size");
     hash_factory_ = std::make_unique<HF<T, S>>();
     hash_ = hash_factory_->create_hash();
 }
@@ -119,25 +88,7 @@ CLASS_METHOD_IMPL(insert, void)
     auto fingerprint = hash_->value(item) % (1 << F);
     auto quotient = fingerprint >> (F - Q);
     auto remainder = fingerprint & ((1 << (F - Q)) - 1);
-    if (buckets_[quotient].is_empty()) {
-        buckets_[quotient].fingerprint_remainder = remainder;
-        buckets_[quotient].is_occupied = 1;
-        return;
-    }
-    buckets_[quotient].is_occupied = 1;
-    run this_run = find_run(quotient);
-    for (size_t run_idx = this_run.start; run_idx < this_run.end; ++run_idx) {
-        if (buckets_[run_idx].fingerprint_remainder == remainder) {
-            return;
-        }
-        if (buckets_[run_idx].fingerprint_remainder > remainder) {
-            shift_right(run_idx);
-            buckets_[run_idx].fingerprint_remainder = remainder;
-            return;
-        }
-    }
-    shift_right(this_run.end);
-    buckets_[this_run.end].fingerprint_remainder = remainder;
+    table_.insert(quotient, remainder);
 }
 
 CLASS_METHOD_IMPL(erase, void)
@@ -147,12 +98,7 @@ CLASS_METHOD_IMPL(erase, void)
 
 CLASS_METHOD_IMPL(clear, void)
 () {
-    std::for_each(buckets_.begin(), buckets_.end(), [](bucket& item) {
-        item.is_occupied = 0;
-        item.is_continuation = 0;
-        item.is_shifted = 0;
-        item.fingerprint_remainder = 0;
-    });
+    table_.clear();
 }
 
 CLASS_METHOD_IMPL(contains, bool)
@@ -160,65 +106,10 @@ CLASS_METHOD_IMPL(contains, bool)
     auto fingerprint = hash_->value(item) % (1 << F);
     auto quotient = fingerprint >> (F - Q);
     auto remainder = fingerprint & ((1 << (F - Q)) - 1);
-    if (!buckets_[quotient].is_occupied) {
-        return false;
-    }
-    run this_run = find_run(quotient);
-    for (size_t run_idx = this_run.start; run_idx < this_run.end; ++run_idx) {
-        if (buckets_[run_idx].fingerprint_remainder == remainder) {
-            return true;
-        }
-    }
-    return false;
-}
-
-CLASS_METHOD_IMPL(shift_right, void)
-(size_t bucket_index) {
-    bucket prev = buckets_[bucket_index];
-    size_t i = bucket_index + 1;
-    while (true) {
-        if (buckets_[i].is_empty()) {
-            buckets_[i].fingerprint_remainder = prev.fingerprint_remainder;
-            buckets_[i].is_continuation = 1;
-            buckets_[i].is_shifted = 1;
-            break;
-        } else {
-            bucket curr = buckets_[i];
-            buckets_[i].fingerprint_remainder = prev.fingerprint_remainder;
-            buckets_[i].is_continuation = prev.is_continuation;
-            buckets_[i].is_shifted = prev.is_shifted;
-            prev = curr;
-        }
-        i = (i + 1) % buckets_.size();
-    }
-}
-
-CLASS_METHOD_IMPL_TYPED(find_run, run)
-(size_t bucket_index) const {
-    size_t j = bucket_index;
-    for (; buckets_[j].is_shifted; j--) {
-    }
-    size_t run_start = j;
-    while (j != bucket_index) {
-        run_start++;
-        while (buckets_[run_start].is_continuation) {
-            run_start++;
-        }
-        j++;
-        while (!buckets_[j].is_occupied) {
-            j++;
-        }
-    }
-    size_t run_end = run_start;
-    run_end++;
-    while (buckets_[run_end].is_continuation) {
-        run_end++;
-    }
-    return run{run_start, run_end};
+    return table_.contains(quotient, remainder);
 }
 
 #undef CLASS_METHOD_IMPL
-#undef CLASS_METHOD_IMPL_TYPED
 
 }   // namespace pdstl
 
