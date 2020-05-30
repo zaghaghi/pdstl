@@ -2,7 +2,8 @@
 #include <membership/bloom_filter.h>
 #include <membership/bloom_filter_calculator.h>
 #include <membership/counting_bloom_filter.h>
-#include <membership/quotient_filter.h>
+// #include <membership/quotient_filter.h>
+#include <table/quotient_table.h>
 
 #include <algorithm>
 #include <iostream>
@@ -98,5 +99,60 @@ int main(int /* argc */, char** /*argv*/) {
         std::cout << "NOT FOUND" << std::endl;
     }
 
-    pdstl::quotient_filter<16, 4> a_quotient_filter;
+    // pdstl::quotient_filter<16, 4> a_quotient_filter;
+    // std::for_each(urls.begin(), urls.end(), [&a_quotient_filter](const std::string& item) {
+    //     a_quotient_filter.insert(item);
+    // });
+    // if (a_quotient_filter.contains("https://gmail.com")) {
+    //     std::cout << "FOUND!!!!!" << std::endl;
+    // } else {
+    //     std::cout << "NOT FOUND" << std::endl;
+    // }
+    // if (a_quotient_filter.contains(urls[0])) {
+    //     std::cout << "FOUND" << std::endl;
+    // } else {
+    //     std::cout << "NOT FOUND!!!!!" << std::endl;
+    // }
+
+    pdstl::quotient_table<pdstl::quotient_bucket<uint16_t, 12>> table(8);
+    std::cout << sizeof(table) << std::endl;
+    table.insert(0, 10);
+    // table.print_internals();
+    table.insert(0, 11);
+    // table.print_internals();
+    table.insert(1, 12);
+    // table.print_internals();
+    table.insert(1, 13);
+    // table.print_internals();
+    table.insert(7, 14);
+    // table.print_internals();
+    table.insert(7, 15);
+    // table.print_internals();
+    table.insert(0, 9);
+    // table.print_internals();
+
+    pdstl::quotient_table<pdstl::quotient_bucket<uint16_t, 12>> table2(8);
+    table2.insert(0, 12);
+    // table2.print_internals();
+    table2.insert(0, 10);
+    // table2.print_internals();
+    table2.insert(0, 8);
+    // table2.print_internals();
+    table2.insert(0, 9);
+    // table2.print_internals();
+    table2.insert(0, 11);
+    // table2.print_internals();
+    table2.insert(6, 20);
+    // table2.print_internals();
+    table2.insert(6, 18);
+    // table2.print_internals();
+    table2.insert(6, 19);
+    // table2.print_internals();
+    table2.contains(6, 19);
+    table2.contains(6, 20);
+    table2.clear();
+    // std::cout << table.contains(0, 11) << std::endl;
+    // std::cout << table.contains(0, 12) << std::endl;
+
+    pdstl::quotient_table<pdstl::quotient_counting_bucket<uint16_t, uint16_t, 12>> counting_table(8);
 }
