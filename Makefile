@@ -8,6 +8,6 @@ clean: FORCE
 	ninja -C build -j 4 -t clean
 
 docs: FORCE
-	doxygen Doxyfile
+	cd docs && make html
 
 FORCE:
