@@ -56,6 +56,13 @@ uint32_t mmh3_hash<std::string, uint32_t>::value(const std::string& input) const
     return output;
 }
 
+template <>
+uint32_t mmh3_hash<uint32_t, uint32_t>::value(const uint32_t& input) const {
+    uint32_t output;
+    MurmurHash3_x86_32(&input, sizeof(input), seed_, &output);
+    return output;
+}
+
 }   // namespace pdstl
 
 #endif   // INCLUDE_HASH_MMH3_HASH_H_

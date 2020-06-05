@@ -2,6 +2,7 @@
 #include <membership/bloom_filter.h>
 #include <membership/bloom_filter_calculator.h>
 #include <membership/counting_bloom_filter.h>
+#include <membership/cuckoo_filter.h>
 #include <membership/quotient_filter.h>
 
 #include <algorithm>
@@ -99,4 +100,19 @@ int main(int /* argc */, char** /*argv*/) {
     }
 
     pdstl::quotient_filter<16, 4> a_quotient_filter;
+    pdstl::cuckoo_filter<pdstl::cuckoo_table<4, 4, uint8_t>> a_cuckoo_filter(32, 1000);
+    std::for_each(urls.begin(), urls.end(), [&a_cuckoo_filter](const std::string& item) {
+        a_cuckoo_filter.insert(item);
+    });
+    if (a_cuckoo_filter.contains(urls[0])) {
+        std::cout << "FOUND" << std::endl;
+    } else {
+        std::cout << "NOT FOUND!!!!!" << std::endl;
+    }
+    a_cuckoo_filter.erase(urls[0]);
+    if (a_cuckoo_filter.contains(urls[0])) {
+        std::cout << "FOUND!!!!!" << std::endl;
+    } else {
+        std::cout << "NOT FOUND" << std::endl;
+    }
 }
