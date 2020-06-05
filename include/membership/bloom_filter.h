@@ -56,7 +56,7 @@ class bloom_filter : public membership<T> {
      */
     void erase(const T& item) override;
 
-    /*! \biref clear filter and resets its internal memory.
+    /*! \brief clear filter and resets its internal memory.
      *
      */
     void clear() override;
