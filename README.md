@@ -1,4 +1,5 @@
 # PDSTL
+[![Documentation Status](https://readthedocs.org/projects/pdstl/badge/?version=latest)](https://pdstl.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/zaghaghi/pdstl.svg?branch=master)](https://travis-ci.org/zaghaghi/pdstl)
 
 Probabilistic Data Structure Template Library, is the template library for probabilistic data structures.
