@@ -10,7 +10,4 @@ Welcome to Probability Data Structure Template Library's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
-
-.. doxygenclass:: pdstl::bloom_filter
-   :members:
+   membership/index
