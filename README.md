@@ -2,10 +2,10 @@
 [![Documentation Status](https://readthedocs.org/projects/pdstl/badge/?version=latest)](https://pdstl.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/zaghaghi/pdstl.svg?branch=master)](https://travis-ci.org/zaghaghi/pdstl)
 
-Probabilistic Data Structure Template Library, is a header only template library for probabilistic data structures.
+PDSTL, is a header only template library for probabilistic data structures.
 
 # Build Example
-To Build examples to as follows.
+To Build examples do as follows.
 ```bash
 # Setup project with meson
 meson build
@@ -21,7 +21,7 @@ Read the reference documentations on [pdstl.readthedocs.io](https://pdstl.readth
 
 # Implemented Data Structures
 
-| Datastructure           | Insert     | Delete          |
+| Data Structure           | Insert     | Delete          |
 |-------------------------|------------|-----------------|
 | Bloom Filter            | Supported  | Not Supported   |
 | Counting Bloom Filter   | Supported  | Supported       |
