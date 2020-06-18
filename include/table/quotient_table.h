@@ -1,6 +1,8 @@
 #ifndef INCLUDE_TABLE_QUOTIENT_TEABLE_H_
 #define INCLUDE_TABLE_QUOTIENT_TEABLE_H_
 
+#include <exception/not_supported.h>
+
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -57,7 +59,7 @@ class quotient_table {
 
     /*! \brief Erase a key from the table.
      *
-     * \param item - the item to erase from table.
+     * \param key - the key to erase from table.
      * 
      */
     void erase(size_t key);
@@ -130,7 +132,7 @@ CLASS_METHOD_IMPL(insert, void)
 }
 
 CLASS_METHOD_IMPL(erase, void)
-(size_t key) {
+(size_t /* key */) {
     throw not_supported_exception();
 }
 

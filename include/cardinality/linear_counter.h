@@ -59,7 +59,7 @@ class linear_counter : public cardinality<T> {
 
 CLASS_METHOD_IMPL(linear_counter, )
 () : hash_factory_(std::make_unique<HF<T, S>>()) {
-    hash_ = hash_factory->create_hash();
+    hash_ = hash_factory_->create_hash();
     bitset_memory_.reset();
 }
 
